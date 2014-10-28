@@ -1,6 +1,6 @@
 # Clarifai
 
-TODO: Write a gem description
+A Ruby wrapper for the Clarifai APIs
 
 ## Installation
 

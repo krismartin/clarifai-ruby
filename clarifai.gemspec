@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.name          = "clarifai"
   spec.version       = Clarifai::VERSION
   spec.authors       = ["Kris Martin"]
-  spec.email         = ["kris.sugandhi@gmail.com"]
+  spec.email         = ["kris@imagebrief.com"]
   spec.description   = %q{TODO: Write a gem description}
   spec.summary       = %q{TODO: Write a gem summary}
   spec.homepage      = ""
