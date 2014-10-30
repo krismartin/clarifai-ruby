@@ -8,6 +8,7 @@ module Clarifai
       :client_id,
       :client_secret,
       :client_type,
+      :adapter,
       :auth_grant_type,
       :access_token,
       :endpoint,
@@ -21,11 +22,16 @@ module Clarifai
     # By default, don't set a client secret
     DEFAULT_CLIENT_SECRET = nil
 
+    # The adapter that will be used to connect if none is set
+    #
+    # @note The default faraday adapter is Net::HTTP.
+    DEFAULT_ADAPTER = Faraday.default_adapter
+
     # The client type that will be used if none set
     DEFAULT_CLIENT_TYPE = 'confidential'
 
     # The authentication grant type that will be used if none set
-    DEFAULT_AUTH_GRANT_TYPE = 'client-credentials'
+    DEFAULT_AUTH_GRANT_TYPE = 'client_credentials'
 
     # By default, don't set a user access token
     DEFAULT_ACCESS_TOKEN = nil
@@ -74,6 +80,7 @@ module Clarifai
       self.client_id          = DEFAULT_CLIENT_ID
       self.client_secret      = DEFAULT_CLIENT_SECRET
       self.client_type        = DEFAULT_CLIENT_TYPE
+      self.adapter            = DEFAULT_ADAPTER
       self.auth_grant_type    = DEFAULT_AUTH_GRANT_TYPE
       self.access_token       = DEFAULT_ACCESS_TOKEN
       self.endpoint           = DEFAULT_ENDPOINT

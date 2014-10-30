@@ -1,6 +1,6 @@
 # Clarifai
 
-A Ruby wrapper for the Clarifai APIs
+A Ruby wrapper for the Clarifai API
 
 ## Installation
 

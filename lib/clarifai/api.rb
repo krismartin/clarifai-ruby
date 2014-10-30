@@ -1,3 +1,7 @@
+require File.expand_path('../connection', __FILE__)
+require File.expand_path('../request', __FILE__)
+require File.expand_path('../oauth', __FILE__)
+
 module Clarifai
   # @private
   class API
@@ -19,5 +23,9 @@ module Clarifai
       end
       conf
     end
+
+    include Connection
+    include Request
+    include OAuth
   end
 end
