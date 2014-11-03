@@ -20,6 +20,6 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.3"
   spec.add_development_dependency "rake"
-  spec.add_runtime_dependency('faraday', ['>= 0.7', '< 0.10'])
-  spec.add_runtime_dependency('faraday_middleware', ['>= 0.8', '< 0.10'])
+  spec.add_runtime_dependency('faraday', ['>= 0.9', '< 0.10'])
+  spec.add_runtime_dependency('faraday_middleware', ['>= 0.9', '< 0.10'])
 end
