@@ -38,10 +38,11 @@ module Clarifai
           request.body = options unless options.empty?
         end
       end
+
       return response if raw
-      return response.body if no_response_wrapper
-      # return Response.create( response.body, {:limit => response.headers['x-ratelimit-limit'].to_i,
-      #                                         :remaining => response.headers['x-ratelimit-remaining'].to_i} )
+      return response.body
+      # return response.body if no_response_wrapper
+      #return Response.create( response.body )
     end
 
     def formatted_path(path)

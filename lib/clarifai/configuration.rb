@@ -13,7 +13,8 @@ module Clarifai
       :access_token,
       :endpoint,
       :format,
-      :user_agent
+      :user_agent,
+      :no_response_wrapper
     ].freeze
 
     # By default, don't set a client ID
@@ -49,6 +50,9 @@ module Clarifai
     # The user agent that will be sent to the API endpoint if none is set
     DEFAULT_USER_AGENT = "Clarifai Ruby Gem #{Clarifai::VERSION}".freeze
 
+    # By default, don't wrap responses with meta data (i.e. pagination)
+    DEFAULT_NO_RESPONSE_WRAPPER = false
+
     # An array of valid request/response formats
     #
     # @note Not all methods support the XML format.
@@ -77,15 +81,16 @@ module Clarifai
 
     # Reset all configuration options to defaults
     def reset
-      self.client_id          = DEFAULT_CLIENT_ID
-      self.client_secret      = DEFAULT_CLIENT_SECRET
-      self.client_type        = DEFAULT_CLIENT_TYPE
-      self.adapter            = DEFAULT_ADAPTER
-      self.auth_grant_type    = DEFAULT_AUTH_GRANT_TYPE
-      self.access_token       = DEFAULT_ACCESS_TOKEN
-      self.endpoint           = DEFAULT_ENDPOINT
-      self.format             = DEFAULT_FORMAT
-      self.user_agent         = DEFAULT_USER_AGENT
+      self.client_id            = DEFAULT_CLIENT_ID
+      self.client_secret        = DEFAULT_CLIENT_SECRET
+      self.client_type          = DEFAULT_CLIENT_TYPE
+      self.adapter              = DEFAULT_ADAPTER
+      self.auth_grant_type      = DEFAULT_AUTH_GRANT_TYPE
+      self.access_token         = DEFAULT_ACCESS_TOKEN
+      self.endpoint             = DEFAULT_ENDPOINT
+      self.format               = DEFAULT_FORMAT
+      self.user_agent           = DEFAULT_USER_AGENT
+      self.no_response_wrapper  = DEFAULT_USER_AGENT
     end
   end
 end
