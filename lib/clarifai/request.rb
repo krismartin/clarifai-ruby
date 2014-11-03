@@ -5,30 +5,31 @@ module Clarifai
   # Defines HTTP request methods
   module Request
     # Perform an HTTP GET request
-    def get(path, options={}, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
-      request(:get, path, options, raw, unformatted, no_response_wrapper)
+    def get(path, options={}, params_encoder=params_encoder, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
+      request(:get, path, options, params_encoder, raw, unformatted, no_response_wrapper)
     end
 
     # Perform an HTTP POST request
-    def post(path, options={}, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
-      request(:post, path, options, raw, unformatted, no_response_wrapper)
+    def post(path, options={}, params_encoder=params_encoder, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
+      request(:post, path, options, params_encoder, raw, unformatted, no_response_wrapper)
     end
 
     # Perform an HTTP PUT request
-    def put(path, options={}, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
-      request(:put, path, options, raw, unformatted, no_response_wrapper)
+    def put(path, options={}, params_encoder=params_encoder, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
+      request(:put, path, options, params_encoder, raw, unformatted, no_response_wrapper)
     end
 
     # Perform an HTTP DELETE request
-    def delete(path, options={}, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
-      request(:delete, path, options, raw, unformatted, no_response_wrapper)
+    def delete(path, options={}, params_encoder=params_encoder, raw=false, unformatted=false, no_response_wrapper=no_response_wrapper)
+      request(:delete, path, options, params_encoder, raw, unformatted, no_response_wrapper)
     end
 
     private
 
     # Perform an HTTP request
-    def request(method, path, options, raw=false, unformatted=false, no_response_wrapper=false)
+    def request(method, path, options, params_encoder=params_encoder, raw=false, unformatted=false, no_response_wrapper=false)
       response = connection(raw).send(method) do |request|
+        request.options.params_encoder = params_encoder
         path = formatted_path(path) unless unformatted
         case method
         when :get, :delete

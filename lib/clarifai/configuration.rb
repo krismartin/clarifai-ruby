@@ -14,6 +14,7 @@ module Clarifai
       :endpoint,
       :format,
       :user_agent,
+      :params_encoder,
       :no_response_wrapper
     ].freeze
 
@@ -49,6 +50,9 @@ module Clarifai
 
     # The user agent that will be sent to the API endpoint if none is set
     DEFAULT_USER_AGENT = "Clarifai Ruby Gem #{Clarifai::VERSION}".freeze
+
+    # The default Faraday params encoder that will be used if none set
+    DEFAULT_PARAMS_ENCODER = Faraday::NestedParamsEncoder
 
     # By default, don't wrap responses with meta data (i.e. pagination)
     DEFAULT_NO_RESPONSE_WRAPPER = false
@@ -90,6 +94,7 @@ module Clarifai
       self.endpoint             = DEFAULT_ENDPOINT
       self.format               = DEFAULT_FORMAT
       self.user_agent           = DEFAULT_USER_AGENT
+      self.params_encoder       = DEFAULT_PARAMS_ENCODER
       self.no_response_wrapper  = DEFAULT_USER_AGENT
     end
   end

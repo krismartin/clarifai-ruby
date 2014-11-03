@@ -5,13 +5,14 @@ module Clarifai
       # Tags an image from url
       #
       # @overload tag(url)
-      #   @param url [String] The url of the image
+      #   @param url [Array] The urls of the images
       #   @example FIXME
-      #     Clarifai.tag("http://unsplash.imgix.net/33/YOfYx7zhTvYBGYs6g83s_IMG_8643.jpg")
+      #     Clarifai.tag("https://farm9.staticflickr.com/8521/8462518619_5eb4e52ede_z.jpg")
+      #     Clarifai.tag(["https://farm9.staticflickr.com/8521/8462518619_5eb4e52ede_z.jpg", "https://farm6.staticflickr.com/5063/5851651730_ee7ebe5d5f_z.jpg"])
       # @format :json
       # @see https://developer.clarifai.com/docs/tag
-      def tag(url, options={})
-        response = post("tag", options.merge(url: url))
+      def tag(urls, options={})
+        response = post("tag", options.merge(url: urls), Faraday::FlatParamsEncoder)
         response
       end
     end

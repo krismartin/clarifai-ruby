@@ -14,7 +14,7 @@ module Clarifai
       # @rate_limited true
       # @see https://developer.clarifai.com/docs/info
       def info()
-        reponse = get("info")
+        response = get("info")
         response
       end
     end
