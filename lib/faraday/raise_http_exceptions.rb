@@ -10,7 +10,7 @@ module FaradayMiddleware
         when 400
           raise Clarifai::BadRequest, error_message_400(response)
         when 401
-          raise Clarifai::TokenExpired, error_message_400(response)
+          raise Clarifai::Unauthorized, error_message_400(response)
         when 500
           raise Clarifai::InternalServerError, error_message_500(response, "Something is technically wrong.")
         end
