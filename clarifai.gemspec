@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Clarifai::VERSION
   spec.authors       = ["Kris Martin"]
   spec.email         = ["kris@imagebrief.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{A Ruby wrapper for the Clarifai API}
+  spec.summary       = %q{A Ruby wrapper for the Clarifai API}
   spec.homepage      = ""
   spec.license       = "MIT"
 
