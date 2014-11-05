@@ -21,7 +21,8 @@ module Clarifai
           when 'json' then connection.use Faraday::Response::ParseJson
           end
         end
-        connection.use FaradayMiddleware::RaiseHttpException
+        # FIXME: Disable this middleware for now
+        # connection.use FaradayMiddleware::RaiseHttpException
         connection.adapter(adapter)
       end
     end
