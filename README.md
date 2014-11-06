@@ -4,17 +4,7 @@ A Ruby wrapper for the Clarifai API
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-    gem 'clarifai'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install clarifai
+TODO: Write installation instructions here
 
 ## Usage
 

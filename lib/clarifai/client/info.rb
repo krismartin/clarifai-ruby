@@ -6,12 +6,10 @@ module Clarifai
       #
       # @overload info()
       #   @return [Hashie::Mash] The requested api details.
-      #   @example
+      #   @example Returns the current api details as well as any usage limits
       #     Clarifai.info()
       # @format :json
       # @authenticated true
-      #
-      # @rate_limited true
       # @see https://developer.clarifai.com/docs/info
       def info()
         response = get("info")
