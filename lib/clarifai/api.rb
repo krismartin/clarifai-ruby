@@ -14,6 +14,9 @@ module Clarifai
       Configuration::VALID_OPTIONS_KEYS.each do |key|
         send("#{key}=", options[key])
       end
+
+      # Generate access_token if one is not present
+      self.access_token = get_access_token[:access_token] if self.access_token.blank?
     end
 
     def config
