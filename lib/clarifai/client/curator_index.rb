@@ -7,10 +7,12 @@ module Clarifai
         response
       end
 
-      def create_index(index, options={})
-        response = post("index/#{index}", options.merge(index: options[:index]), Faraday::FlatParamsEncoder)
+      def create_index(index, index_settings={}, options={})
+        options.merge!({index: index_settings}) # merge index options
+        response = put("index/#{index}", options, Faraday::FlatParamsEncoder)
         response
       end
+      alias_method :put_index, :create_index
       alias_method :update_index, :create_index
 
       def delete_index(index, options={})
