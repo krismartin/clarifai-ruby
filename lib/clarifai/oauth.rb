@@ -5,7 +5,7 @@ module Clarifai
     def get_access_token(options={})
       options[:grant_type] ||= self.auth_grant_type
       params = access_token_params.merge(options)
-      post("/token/", params, params_encoder, raw=false, unformatted=true, no_response_wrapper=true)
+      post("/token/", params, params_encoder, encode_json=false, raw=false, no_response_wrapper=true)
     end
 
     private
