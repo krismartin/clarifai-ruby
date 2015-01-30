@@ -6,7 +6,7 @@ module Clarifai
   module Connection
     private
 
-    def connection(raw=false)
+    def connection(raw=false, encode_json=false)
       options = {
         :headers => {'Accept' => "application/#{format}; charset=utf-8", 'User-Agent' => user_agent},
         :url => endpoint,
@@ -14,7 +14,11 @@ module Clarifai
 
       Faraday::Connection.new(options) do |connection|
         connection.use FaradayMiddleware::ClarifaiOAuth2, client_id, access_token
-        connection.use Faraday::Request::UrlEncoded
+        if encode_json
+          connection.use FaradayMiddleware::EncodeJson
+        else
+          connection.use Faraday::Request::UrlEncoded
+        end
         connection.use FaradayMiddleware::Mashify unless raw
         unless raw
           case format.to_s.downcase
