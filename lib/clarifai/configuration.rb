@@ -15,7 +15,8 @@ module Clarifai
       :format,
       :user_agent,
       :params_encoder,
-      :no_response_wrapper
+      :no_response_wrapper,
+      :index
     ].freeze
 
     # By default, don't set a client ID
@@ -41,7 +42,9 @@ module Clarifai
     # The endpoint that will be used to connect if none is set
     #
     # @note There is no reason to use any other endpoint at this time
-    DEFAULT_ENDPOINT = 'https://api.clarifai.com//v1/'.freeze
+    # DEFAULT_ENDPOINT = 'https://api.clarifai.com//v1/'.freeze
+    DEFAULT_ENDPOINT = 'https://api-staging.clarifai.com//v1/'.freeze
+
 
     # The response format appended to the path and sent in the 'Accept' header if none is set
     #
@@ -95,7 +98,7 @@ module Clarifai
       self.format               = DEFAULT_FORMAT
       self.user_agent           = DEFAULT_USER_AGENT
       self.params_encoder       = DEFAULT_PARAMS_ENCODER
-      self.no_response_wrapper  = DEFAULT_USER_AGENT
+      self.no_response_wrapper  = DEFAULT_NO_RESPONSE_WRAPPER
     end
   end
 end
