@@ -11,6 +11,17 @@ module Clarifai
         response = post("curator/#{index}/search", options.to_json, params_encoder, encode_json=true)
         response
       end
+
+      def similar_search(index, image_urls, size=50, page=0, search_options={})
+        image_urls = [image_urls] if image_urls.is_a? String
+        options = {
+          query: { similar_urls: image_urls },
+          num: size,
+          start: page
+        }
+        response = post("curator/#{index}/search", options.to_json, params_encoder, encode_json=true)
+        response
+      end
     end
   end
 end
