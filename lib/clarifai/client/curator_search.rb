@@ -18,11 +18,18 @@ module Clarifai
 
       def tags_search(index, tags, size=50, start=0, search_options={})
         tags = [tags] if tags.is_a? String
+
         options = {
-          query: { tags: tags },
           num: size,
           start: start
         }
+
+        if tags.is_a? Array
+          options[:query] = { tags: tags }
+        elsif tags.is_a? Hash
+          options[:query] = { tags: { tags: tags } }
+        end
+
         search(index, options)
       end
 
