@@ -11,12 +11,17 @@ module Clarifai
       # Example:
       # clarifai.create_document "index_name", "http://example.com/image.jpg", "document-id-xyz", "image", { photographer_id: "photographer-id-123", title: "Photo caption" }
       #
-      def create_document(index, url, doc_id, doc_metadata={}, doc_options={})
+      def create_document(index, urls, doc_id, doc_metadata={}, doc_options={})
         options = { document: {}}
-        options[:document][:media_refs] = [{
-          url: url,
-          media_type: 'image' # hardcoded to 'image'
-        }]
+        options[:document][:media_refs] = []
+
+        urls = [urls] if urls.is_a? String
+        urls.each do |url|
+          options[:document][:media_refs] << {
+            url: url,
+            media_type: 'image'
+          }
+        end
 
         unless doc_metadata.empty?
           options[:document][:metadata] = doc_metadata # merge document metadata
@@ -43,11 +48,15 @@ module Clarifai
         options[:options] = doc_options unless doc_options.empty?
 
         urls.each_with_index do |url, index|
-          document = {
-            media_refs: [{
-              url: url, media_type: 'image'
-            }]
-          }
+          document = { media_refs: [] }
+          if url.is_a? String
+            document[:media_refs] << { url: url, media_type: 'image' }
+
+          elsif url.is_a? Array
+            url.each do |u|
+              document[:media_refs] << { url: u, media_type: 'image' }
+            end
+          end
 
           # merge document id
           document[:docid] = doc_ids[index]
@@ -63,8 +72,8 @@ module Clarifai
       end
       alias_method :put_documents, :create_documents
 
-      def delete_document(index, doc_id, options={})
-        response = delete("index/#{index}/document/#{doc_id}", options, params_encoder, raw=false, no_response_wrapper=true)
+      def delete_document(index, doc_id)
+        response = delete("curator/#{index}/document/#{doc_id}", {}.to_json, params_encoder, encode_json=true)
         response
       end
     end
