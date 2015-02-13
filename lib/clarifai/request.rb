@@ -30,12 +30,18 @@ module Clarifai
     def request(method, path, options, params_encoder=params_encoder, encode_json=false, raw=false, no_response_wrapper=false)
       response = connection(raw, encode_json).send(method) do |request|
         request.options.params_encoder = params_encoder
-        case method
-        when :get, :delete
-          request.url(path, options)
-        when :post, :put
+
+        if encode_json
           request.path = path
           request.body = options unless options.empty?
+        else
+          case method
+          when :get, :delete
+            request.url(path, options)
+          when :post, :put
+            request.path = path
+            request.body = options unless options.empty?
+          end
         end
       end
 
