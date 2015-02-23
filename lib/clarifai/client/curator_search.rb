@@ -53,8 +53,10 @@ module Clarifai
         search(index, options)
       end
 
-      def similar_search(index, image_urls, size=50, start=0, metadata_filters={})
-        image_urls = [image_urls] if image_urls.is_a? String
+      def similar_search(index, image_urls_or_doc_ids, size=50, start=0, metadata_filters={})
+        image_urls_or_doc_ids = [image_urls_or_doc_ids] if image_urls_or_doc_ids.is_a? String
+        similar_search_type = determine_image_urls_or_doc_ids(image_urls_or_doc_ids)
+
         options = {
           num: size,
           start: start
@@ -64,13 +66,13 @@ module Clarifai
           options[:query] = {
             bool: {
               must: [
-                { similar_urls: image_urls },
+                { similar_search_type => image_urls_or_doc_ids },
                 { term: metadata_filters }
               ]
             }
           }
         else
-          options[:query] = { similar_urls: image_urls }
+          options[:query] = { similar_search_type => image_urls_or_doc_ids }
         end
 
         search(index, options)
@@ -85,6 +87,14 @@ module Clarifai
           query[:tags] = { tags: tags }
         end
         return query
+      end
+
+      def determine_image_urls_or_doc_ids(image_urls_or_doc_ids)
+        if image_urls_or_doc_ids.collect{|val| val.match(/^http/).present?}.include?(false)
+          'similar_items'
+        else
+          'similar_urls'
+        end
       end
     end
   end
