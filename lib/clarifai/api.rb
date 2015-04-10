@@ -16,7 +16,7 @@ module Clarifai
       end
 
       # Generate access_token if one is not present
-      self.access_token = get_access_token[:access_token] if self.access_token.blank?
+      self.access_token = get_access_token[:access_token] if (!self.access_token || self.access_token.empty?)
     end
 
     def config
