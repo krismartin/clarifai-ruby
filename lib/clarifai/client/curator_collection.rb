@@ -7,12 +7,12 @@ module Clarifai
         response
       end
 
-      def create_collection(collection_id, collection_settings={}, collection_properties={}, options={})
+      def create_collection(collection_id, collection_settings={}, collection_properties={})
         collection_attributes = { id: collection_id }
         collection_attributes[:settings] = collection_settings unless collection_settings.empty?
         collection_attributes[:properties] = collection_properties unless collection_properties.empty?
-        options.merge!(collection: collection_attributes)
-        response = post("curator/collections", options.to_json, params_encoder, encode_json=true)
+        params = { collection: collection_attributes }
+        response = post("curator/collections", params.to_json, params_encoder, encode_json=true)
         response
       end
 

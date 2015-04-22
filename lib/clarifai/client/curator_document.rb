@@ -1,79 +1,95 @@
 module Clarifai
   class Client
-    # Defines methods related to Curator Index management
+    # Defines methods related to Curator Document management
     module CuratorDocument
-      def get_document(index, doc_id)
-        response = get("curator/#{index}/document/#{doc_id}")
+      def get_document(collection_id, doc_id)
+        response = get("curator/collections/#{collection_id}/documents/#{doc_id}")
+        response
+      end
+
+      def get_documents(collection_id)
+        response = get("curator/collections/#{collection_id}/documents")
         response
       end
 
       #
-      # Example:
-      # clarifai.create_document "index_name", "http://example.com/image.jpg", "document-id-xyz", "image", { photographer_id: "photographer-id-123", title: "Photo caption" }
+      # Add a document to a collection
       #
-      def create_document(index, urls, doc_id, doc_metadata={}, doc_options={})
-        options = { document: {}}
-        options[:document][:media_refs] = []
+      def create_document(collection_id, doc_id, urls, doc_metadata={}, options={})
+        document_attributes = { docid: doc_id, media_refs: [] }
 
+        # Set document media refs
         urls = [urls] if urls.is_a? String
         urls.each do |url|
-          options[:document][:media_refs] << {
+          document_attributes[:media_refs] << {
             url: url,
             media_type: 'image'
           }
         end
 
-        unless doc_metadata.empty?
-          options[:document][:metadata] = doc_metadata # merge document metadata
-        end
+        # Set document metadata
+        document_attributes[:metadata] = doc_metadata unless doc_metadata.empty?
 
-        if doc_options.empty?
-          doc_options[:want_doc_response] = true
-        end
+        # Set options
+        options[:want_doc_response] = true if options.empty?
 
-        unless doc_options.empty?
-          options[:options] = doc_options # merge document options
-        end
+        params = { document: document_attributes, options: options }
 
-        response = put("curator/#{index}/document/#{doc_id}", options.to_json, params_encoder, encode_json=true)
+        response = post("curator/collections/#{collection_id}/documents", params.to_json, params_encoder, encode_json=true)
         response
       end
-      alias_method :put_document, :create_document
 
-      def create_documents(index, urls, doc_ids, doc_metadatas=[], doc_options={})
-        options = { documents: [] }
-
-        # merge document options
-        doc_options[:want_doc_response] = true if doc_options.empty?
-        options[:options] = doc_options unless doc_options.empty?
+      #
+      # Add multiple documents to a collection
+      #
+      def create_documents(index, doc_ids, urls, doc_metadatas=[], options={})
+        documents = []
 
         urls.each_with_index do |url, index|
           document = { media_refs: [] }
+
+          # Set doc id
+          document[:docid] = doc_ids[index]
+
+          # Set doc media refs
           if url.is_a? String
             document[:media_refs] << { url: url, media_type: 'image' }
-
           elsif url.is_a? Array
             url.each do |u|
               document[:media_refs] << { url: u, media_type: 'image' }
             end
           end
 
-          # merge document id
-          document[:docid] = doc_ids[index]
+          # Set doc metadata
+          document[:metadata] = doc_metadatas[index] unless doc_metadatas[index].empty?
 
-          # merge document metadata
-          document[:metadata] = doc_metadatas[index] if doc_metadatas[index].present?
-
-          options[:documents] << document
+          documents << document
         end
 
-        response = put("curator/#{index}/documents", options.to_json, params_encoder, encode_json=true)
+        params = { documents: documents }
+
+        # Set options
+        options[:want_doc_response] = true if options.empty?
+        params[:options] = options
+
+        response = post("curator/collections/#{collection_id}/documents", params.to_json, params_encoder, encode_json=true)
         response
       end
-      alias_method :put_documents, :create_documents
 
-      def delete_document(index, doc_id)
-        response = delete("curator/#{index}/document/#{doc_id}", {}.to_json, params_encoder, encode_json=true)
+      #
+      # Delete a document by docid
+      #
+      def delete_document(collection_id, doc_id)
+        response = delete("curator/collections/#{collection_id}/documents/#{doc_id}", {}.to_json, params_encoder, encode_json=true)
+        response
+      end
+
+      #
+      # Delete multiple documents by docids
+      #
+      def delete_documents(collection_id, doc_ids)
+        params = { documents: doc_ids }
+        response = delete("curator/collections/#{collection_id}/documents", params.to_json, params_encoder, encode_json=true)
         response
       end
     end
