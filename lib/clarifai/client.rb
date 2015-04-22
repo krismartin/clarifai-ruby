@@ -7,7 +7,7 @@ module Clarifai
 
     include Clarifai::Client::Info
     include Clarifai::Client::Tag
-    include Clarifai::Client::CuratorIndex
+    include Clarifai::Client::CuratorCollection
     include Clarifai::Client::CuratorDocument
     include Clarifai::Client::CuratorSearch
   end

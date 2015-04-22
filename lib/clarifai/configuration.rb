@@ -16,7 +16,7 @@ module Clarifai
       :user_agent,
       :params_encoder,
       :no_response_wrapper,
-      :index
+      :collection_id
     ].freeze
 
     # By default, don't set a client ID
