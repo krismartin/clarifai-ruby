@@ -1,13 +1,13 @@
 module Clarifai
   class Client
-    # Defines methods related to Curator Index management
+    # Defines methods related to Curator Collection search
     module CuratorSearch
-      def search(index, search_options={})
-        response = post("curator/#{index}/search", search_options.to_json, params_encoder, encode_json=true)
+      def search(collection_id, search_options={})
+        response = post("curator/collections/#{collection_id}/search", search_options.to_json, params_encoder, encode_json=true)
         response
       end
 
-      def query_string_search(index, query, size=50, start=0, metadata_filters={})
+      def query_string_search(collection_id, query, size=50, start=0, metadata_filters={})
         options = {
           num: size,
           start: start
@@ -26,7 +26,7 @@ module Clarifai
           options[:query] = { query_string: query }
         end
 
-        search(index, options)
+        search(collection_id, options)
       end
 
       def tags_search(index, tags, size=50, start=0, metadata_filters={})
