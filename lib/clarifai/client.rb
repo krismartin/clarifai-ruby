@@ -10,5 +10,6 @@ module Clarifai
     include Clarifai::Client::CuratorCollection
     include Clarifai::Client::CuratorDocument
     include Clarifai::Client::CuratorSearch
+    include Clarifai::Client::CuratorSuggest
   end
 end
