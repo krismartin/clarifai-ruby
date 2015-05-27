@@ -17,9 +17,8 @@ module Clarifai
           options[:query] = {
             bool: {
               must: [
-                { query_string: query },
-                { term: metadata_filters }
-              ]
+                { query_string: query }
+              ].concat(construct_metadata_filters(metadata_filters))
             }
           }
         else
@@ -41,9 +40,8 @@ module Clarifai
           options[:query] = {
             bool: {
               must: [
-                construct_query_tags(tags),
-                { term: metadata_filters }
-              ]
+                construct_query_tags(tags)
+              ].concat(construct_metadata_filters(metadata_filters))
             }
           }
         else
@@ -66,9 +64,8 @@ module Clarifai
           options[:query] = {
             bool: {
               must: [
-                { similar_search_type => image_urls_or_doc_ids },
-                { term: metadata_filters }
-              ]
+                { similar_search_type => image_urls_or_doc_ids }
+              ].concat(construct_metadata_filters(metadata_filters))
             }
           }
         else
@@ -87,6 +84,16 @@ module Clarifai
           query[:tags] = { tags: tags }
         end
         return query
+      end
+
+      def construct_metadata_filters(filters)
+        terms = []
+        filters.each do |key, value|
+          terms << {
+            term: { key => value }
+          }
+        end
+        return terms
       end
 
       def determine_image_urls_or_doc_ids(image_urls_or_doc_ids)
