@@ -7,7 +7,7 @@ module Clarifai
         response
       end
 
-      def query_string_search(collection_id, query, size=50, start=0, metadata_filters={})
+      def query_string_search(collection_id, query, size=50, start=0, metadata_filters={}, search_options={})
         options = {
           num: size,
           start: start
@@ -25,10 +25,12 @@ module Clarifai
           options[:query] = { query_string: query }
         end
 
+        merge_search_options!(options, search_options)
+
         search(collection_id, options)
       end
 
-      def tags_search(index, tags, size=50, start=0, metadata_filters={})
+      def tags_search(index, tags, size=50, start=0, metadata_filters={}, search_options={})
         tags = [tags] if tags.is_a? String
 
         options = {
@@ -48,10 +50,12 @@ module Clarifai
           options[:query] = construct_query_tags(tags)
         end
 
+        merge_search_options!(options, search_options)
+
         search(index, options)
       end
 
-      def similar_search(index, image_urls_or_doc_ids, size=50, start=0, metadata_filters={})
+      def similar_search(index, image_urls_or_doc_ids, size=50, start=0, metadata_filters={}, search_options={})
         image_urls_or_doc_ids = [image_urls_or_doc_ids] if image_urls_or_doc_ids.is_a? String
         similar_search_type = determine_image_urls_or_doc_ids(image_urls_or_doc_ids)
 
@@ -71,6 +75,8 @@ module Clarifai
         else
           options[:query] = { similar_search_type => image_urls_or_doc_ids }
         end
+
+        merge_search_options!(options, search_options)
 
         search(index, options)
       end
@@ -102,6 +108,13 @@ module Clarifai
         else
           'similar_urls'
         end
+      end
+
+      def merge_search_options!(options, search_options)
+        return if (search_options.nil? || search_options.empty?)
+        options[:options] = {} unless options.has_key?(:options)
+        options[:options].merge!(search_options)
+        return true
       end
     end
   end
