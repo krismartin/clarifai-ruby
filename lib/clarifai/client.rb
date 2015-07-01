@@ -13,5 +13,6 @@ module Clarifai
     include Clarifai::Client::CuratorSuggest
     include Clarifai::Client::DocumentMetadata
     include Clarifai::Client::DocumentAnnotation
+    include Clarifai::Client::DocumentMediaRef
   end
 end
