@@ -7,6 +7,7 @@ module Clarifai
   class API
     # @private
     attr_accessor *Configuration::VALID_OPTIONS_KEYS
+    attr_accessor :access_token_expires_at
 
     # Creates a new API
     def initialize(options={})
@@ -16,7 +17,11 @@ module Clarifai
       end
 
       # Generate access_token if one is not present
-      self.access_token = get_access_token[:access_token] if (!self.access_token || self.access_token.empty?)
+      if (!self.access_token || self.access_token.empty?)
+        auth_response = get_access_token
+        self.access_token = auth_response[:access_token]
+        self.access_token_expires_at = Time.now.utc + auth_response.expires_in if auth_response.expires_in.present?
+      end
     end
 
     def config
