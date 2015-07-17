@@ -22,8 +22,6 @@ module Clarifai
           search_params[:options].merge!(options)
         end
 
-        puts "\n\nsearch_params:"
-        puts search_params
         response = post("curator/collections/#{collection_id}/search", search_params.to_json, params_encoder, encode_json=true)
         response
       end
