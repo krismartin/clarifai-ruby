@@ -13,6 +13,11 @@ module Clarifai
         }
 
         if (!options.nil? && !options.empty?)
+          top_tags = options.delete(:top_tags)
+          if top_tags && top_tags.to_i > 0
+            search_params[:aggs] = { top_tags: top_tags }
+          end
+
           search_params[:options] = {} unless search_params.has_key? :options
           search_params[:options].merge!(options)
         end
