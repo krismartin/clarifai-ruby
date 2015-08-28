@@ -1,5 +1,6 @@
 require File.expand_path('../clarifai/error', __FILE__)
 require File.expand_path('../clarifai/configuration', __FILE__)
+require File.expand_path('../clarifai/search/query', __FILE__)
 require File.expand_path('../clarifai/api', __FILE__)
 require File.expand_path('../clarifai/client', __FILE__)
 
