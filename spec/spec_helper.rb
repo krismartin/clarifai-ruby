@@ -28,9 +28,13 @@ def get_document(client, collection, doc_id)
   return client.get_document collection, doc_id
 end
 
+def delete_document(client, collection, doc_id)
+  return client.delete_document collection, doc_id
+end
+
 Minitest.after_run {
   client = Clarifai::Client.new(client_id: client_id, client_secret: client_secret)
-  ["collection_test", "collection_test-2", "document_test"].each do |postfix|
+  ["collection_test", "collection_test-2", "document_test", "document_metadata_test"].each do |postfix|
     client.delete_collection "#{collection_id}-#{postfix}"
   end
 }
