@@ -76,15 +76,27 @@ class Clarifai::Client::DocumentAnnotationSpec < MiniTest::Spec
         user_defined_annotation = response.document.annotation_sets.detect{|as| as.namespace == "user-defined"}
         user_defined_annotation.annotations.detect{|a| a.tag.cname == 'dog'}.score.must_equal 1.0
       end
+
+      it "should undelete deleted annotation" do
+        @@client.update_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['dog'], score=1.0
+        @@client.delete_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['dog']
+        @@client.update_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['dog'], score=1.0
+
+        response = @@client.get_document @@client.collection_id, image[:id]
+        user_defined_annotation = response.document.annotation_sets.detect{|as| as.namespace == "user-defined"}
+        user_defined_annotation.annotations.detect{|a| a.tag.cname=="dog"}.status.must_be_nil
+      end
     end
 
     describe ".delete_document_annotation" do
-      it "should delete the annotation from the given namespace" do
+      before do
         @@client.update_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['dog'], score=1.0
         @@client.update_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['puppy'], score=1.0
         @@client.update_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['cat'], score=1.0
         @@client.update_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['feline'], score=1.0
+      end
 
+      it "should delete the annotation from the given namespace" do
         response = @@client.delete_document_annotation @@client.collection_id, image[:id], actioner="user", namespace="user-defined", ['cat', 'feline']
         response.annotations_deleted.must_equal true
         response.docid.must_equal image[:id]
