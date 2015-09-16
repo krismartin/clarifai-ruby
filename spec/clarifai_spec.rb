@@ -1,8 +1,7 @@
 require 'minitest/spec'
 require 'minitest/autorun'
 
-require 'faraday'
-require 'clarifai'
+require 'spec_helper'
 
 describe Clarifai do
 
