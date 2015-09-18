@@ -19,6 +19,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
     }
   }}
 
+  #
+  # Initialize Clarifai Client, create a new Collection and add a Document into the new Collection
+  #
   before do
     if @@client.nil? || @@create_doc_response.nil? || @@get_doc_response.nil?
       Clarifai.reset
@@ -32,15 +35,21 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
   describe Clarifai::Client do
 
     describe ".create_document" do
-      it "should return OK status when successful" do
-        @@create_doc_response.status.status.must_equal "OK"
-      end
 
-      it "should return new document ID when successful" do
-        @@create_doc_response.document.docid.must_equal image[:id]
+      describe "response object when successful" do
+
+        it "should have OK status" do
+          @@create_doc_response.status.status.must_equal "OK"
+        end
+
+        it "should have the newly created document" do
+          @@create_doc_response.document.wont_be_nil
+        end
+
       end
 
       describe "document" do
+
         it "should have embeddings" do
           document = @@create_doc_response.document
           document.embeddings.must_be_kind_of Array
@@ -77,6 +86,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
         end
 
         describe "document media_ref" do
+
           it "should have url" do
             media_ref = @@create_doc_response.document.media_refs.first
             media_ref.url.must_equal image[:url]
@@ -86,9 +96,11 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
             media_ref = @@create_doc_response.document.media_refs.first
             media_ref.media_type.wont_be_nil
           end
+
         end
 
         describe "document annotation_set" do
+
           it "should have namespace" do
             annotation_set = @@create_doc_response.document.annotation_sets.first
             annotation_set.namespace.wont_be_nil
@@ -100,6 +112,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
           end
 
           describe "annotation" do
+
             it "should have a score" do
               annotation = @@create_doc_response.document.annotation_sets.first.annotations.first
               annotation.score.must_be_kind_of Float
@@ -109,21 +122,28 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
               annotation = @@create_doc_response.document.annotation_sets.first.annotations.first
               annotation.tag.cname.wont_be_nil
             end
+
           end
         end
       end
     end
 
     describe ".get_document" do
-      it "should return OK status when successful" do
-        @@get_doc_response.status.status.must_equal "OK"
-      end
 
-      it "should return document ID when successful" do
-        @@get_doc_response.document.docid.must_equal image[:id]
+      describe "response object when successful" do
+
+        it "should have OK status" do
+          @@get_doc_response.status.status.must_equal "OK"
+        end
+
+        it "should have the document" do
+          @@get_doc_response.document.wont_be_nil
+        end
+
       end
 
       describe "document" do
+
         it "should have embeddings" do
           document = @@get_doc_response.document
           document.embeddings.must_be_kind_of Array
@@ -160,6 +180,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
         end
 
         describe "document media_ref" do
+
           it "should have url" do
             media_ref = @@get_doc_response.document.media_refs.first
             media_ref.url.must_equal image[:url]
@@ -169,9 +190,11 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
             media_ref = @@get_doc_response.document.media_refs.first
             media_ref.media_type.wont_be_nil
           end
+
         end
 
         describe "document annotation_set" do
+
           it "should have namespace" do
             annotation_set = @@get_doc_response.document.annotation_sets.first
             annotation_set.namespace.wont_be_nil
@@ -183,6 +206,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
           end
 
           describe "annotation" do
+
             it "should have a score" do
               annotation = @@get_doc_response.document.annotation_sets.first.annotations.first
               annotation.score.must_be_kind_of Float
@@ -192,6 +216,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
               annotation = @@get_doc_response.document.annotation_sets.first.annotations.first
               annotation.tag.cname.wont_be_nil
             end
+
           end
         end
       end
@@ -214,12 +239,31 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
         create_document(@@client, @@client.collection_id, new_image)
       end
 
-      it "should delete the document when successful" do
-        response = @@client.delete_document @@client.collection_id, new_image[:id]
-        response.status.status.must_equal "OK"
-        response.deleted.must_equal true
-        response.docid.must_equal new_image[:id]
+      describe "response object when successful" do
+
+        it "should have OK status" do
+          response = @@client.delete_document @@client.collection_id, new_image[:id]
+          response.status.status.must_equal "OK"
+        end
+
+        it "should have the deleted flag" do
+          response = @@client.delete_document @@client.collection_id, new_image[:id]
+          response.deleted.must_equal true
+        end
+
+        it "should have the deleted document ID" do
+          response = @@client.delete_document @@client.collection_id, new_image[:id]
+          response.docid.must_equal new_image[:id]
+        end
+
       end
+
+      it "should delete the correct resource" do
+        @@client.delete_document @@client.collection_id, new_image[:id]
+        response = @@client.get_document @@client.collection_id, new_image[:id]
+        response.status.status.must_equal "ERROR"
+      end
+
     end
   end
 end
