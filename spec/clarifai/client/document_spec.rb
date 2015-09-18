@@ -3,11 +3,12 @@ require 'spec_helper'
 class Clarifai::Client::DocumentSpec < MiniTest::Spec
   @@client = nil
   @@create_doc_response = nil
+  @@create_docs_response = nil
   @@get_doc_response = nil
 
   let(:collection_name) { collection_id + "-document_test" }
 
-  let(:image) {{
+  let(:image_1) {{
     id: "image_1",
     url: "http://farm3.staticflickr.com/2752/4425027236_685ee5fa35_b.jpg",
     type: "image/jpeg",
@@ -19,16 +20,53 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
     }
   }}
 
+  let(:image_2) {{
+    id: "image_2",
+    url: "http://farm4.staticflickr.com/3720/18644414989_e1c248e0b1_b.jpg",
+    type: "image/jpeg",
+    metadata: {
+      "photographer_name" => "Israel Bode",
+      "photographer_id" => "photographer_2",
+      "orientation" => "landscape",
+      "license_type" => "rights-managed"
+    }
+  }}
+
+  let(:image_3) {{
+    id: "image_3",
+    url: "http://farm5.staticflickr.com/4110/5194747168_daa9bd6f47_b.jpg",
+    type: "image/jpeg",
+    metadata: {
+      "photographer_name" => "Robert Wiza",
+      "photographer_id" => "photographer_3",
+      "orientation" => "landscape",
+      "license_type" => "rights-managed"
+    }
+  }}
+
+  let(:image_4) {{
+    id: "image_6",
+    url: "http://farm6.staticflickr.com/5323/18223890844_baa427cbbe_b.jpg",
+    type: "image/jpeg",
+    metadata: {
+      "photographer_name" => "Evelyn Lehner",
+      "photographer_id" => "photographer_4",
+      "orientation" => "landscape",
+      "license_type" => "rights-managed"
+    }
+  }}
+
   #
-  # Initialize Clarifai Client, create a new Collection and add a Document into the new Collection
+  # Initialize Clarifai Client, create a new Collection and create Documents into the new Collection
   #
   before do
     if @@client.nil? || @@create_doc_response.nil? || @@get_doc_response.nil?
       Clarifai.reset
       @@client = Clarifai::Client.new(client_id: client_id, client_secret: client_secret, collection_id: collection_name)
       create_collection(@@client, collection_name)
-      @@create_doc_response = create_document(@@client, collection_name, image)
-      @@get_doc_response = get_document(@@client, collection_name, image[:id])
+      @@create_doc_response = create_document(@@client, collection_name, image_1)
+      @@get_doc_response = get_document(@@client, collection_name, image_1[:id])
+      @@create_docs_response = @@client.create_documents collection_name, [image_3[:id], image_4[:id]], [image_3[:url], image_4[:url]], [image_3[:metadata], image_4[:metadata]]
     end
   end
 
@@ -77,19 +115,19 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have docid" do
           document = @@create_doc_response.document
-          document.docid.must_equal image[:id]
+          document.docid.must_equal image_1[:id]
         end
 
         it "should have metadata" do
           document = @@create_doc_response.document
-          document.metadata.to_hash.must_equal image[:metadata]
+          document.metadata.to_hash.must_equal image_1[:metadata]
         end
 
         describe "document media_ref" do
 
           it "should have url" do
             media_ref = @@create_doc_response.document.media_refs.first
-            media_ref.url.must_equal image[:url]
+            media_ref.url.must_equal image_1[:url]
           end
 
           it "should have media_type" do
@@ -126,6 +164,26 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
           end
         end
       end
+    end
+
+    describe ".create_documents" do
+
+      describe "response object when successful " do
+
+        it "should have OK status" do
+          @@create_docs_response.status.status.must_equal "OK"
+        end
+
+        it "should have an array of newly created documents" do
+          @@create_docs_response.documents.must_be_kind_of Array
+        end
+
+      end
+
+      it "should create the correct resources" do
+        @@create_docs_response.documents.collect{|d| d.docid}.sort == [image_2[:id], image_3[:id]].sort
+      end
+
     end
 
     describe ".get_document" do
@@ -171,19 +229,19 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have docid" do
           document = @@get_doc_response.document
-          document.docid.must_equal image[:id]
+          document.docid.must_equal image_1[:id]
         end
 
         it "should have metadata" do
           document = @@get_doc_response.document
-          document.metadata.to_hash.must_equal image[:metadata]
+          document.metadata.to_hash.must_equal image_1[:metadata]
         end
 
         describe "document media_ref" do
 
           it "should have url" do
             media_ref = @@get_doc_response.document.media_refs.first
-            media_ref.url.must_equal image[:url]
+            media_ref.url.must_equal image_1[:url]
           end
 
           it "should have media_type" do
@@ -223,47 +281,40 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
     end
 
     describe ".delete_document" do
-      let(:new_image) {{
-        id: "image_2",
-        url: "https://farm3.staticflickr.com/2159/1821846921_94856d4d76_b.jpg",
-        type: "image/jpeg",
-        metadata: {
-          "photographer_name" => "Jane Doe",
-          "photographer_id" => "photographer_2",
-          "orientation" => "landscape",
-          "license_type" => "rights-managed"
-        }
-      }}
-
       before do
-        create_document(@@client, @@client.collection_id, new_image)
+        create_document(@@client, @@client.collection_id, image_4)
       end
 
       describe "response object when successful" do
 
         it "should have OK status" do
-          response = @@client.delete_document @@client.collection_id, new_image[:id]
+          response = @@client.delete_document @@client.collection_id, image_4[:id]
           response.status.status.must_equal "OK"
         end
 
         it "should have the deleted flag" do
-          response = @@client.delete_document @@client.collection_id, new_image[:id]
+          response = @@client.delete_document @@client.collection_id, image_4[:id]
           response.deleted.must_equal true
         end
 
         it "should have the deleted document ID" do
-          response = @@client.delete_document @@client.collection_id, new_image[:id]
-          response.docid.must_equal new_image[:id]
+          response = @@client.delete_document @@client.collection_id, image_4[:id]
+          response.docid.must_equal image_4[:id]
         end
 
       end
 
       it "should delete the correct resource" do
-        @@client.delete_document @@client.collection_id, new_image[:id]
-        response = @@client.get_document @@client.collection_id, new_image[:id]
+        @@client.delete_document @@client.collection_id, image_4[:id]
+        response = @@client.get_document @@client.collection_id, image_4[:id]
         response.status.status.must_equal "ERROR"
       end
 
     end
+
+    # TODO
+    describe ".delete_documents" do
+    end
+
   end
 end
