@@ -49,11 +49,14 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
           per_page = 2
           total_pages = (total_num_results + per_page - 1) / per_page
 
+          puts "\nunpaginated_results: #{unpaginated_results.join(', ')}"
+
           total_pages.times do |index|
             page = index+1
             start = (page==1 ? 0 : ((page-1)*per_page))
             response = @@client.search collection_name, tags: ['nobody'], per_page: per_page, start: start
             results = response.results.collect{|r| r.document.docid}
+            puts "Start: #{start}, Per page: #{per_page}: #{results.join(', ')}\n"
             results.must_equal unpaginated_results[start..(start+per_page)-1]
           end
         end
