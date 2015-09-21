@@ -98,6 +98,26 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
 
       end
 
+      describe "with top_tags passed" do
+
+        it "should return the aggregated tags" do
+          response = @@client.search collection_name, { tags: ['nobody'] }, { top_tags: 10 }
+          response.aggregations.top_tags.top_tags.buckets.count == 10
+        end
+
+        describe "tag" do
+
+          it "should have key and doc_count" do
+            response = @@client.search collection_name, { tags: ['nobody'] }, { top_tags: 10 }
+            tag = response.aggregations.top_tags.top_tags.buckets.first
+            tag["key"].wont_be_nil
+            tag["doc_count"].must_be_kind_of Integer
+          end
+
+        end
+
+      end
+
     end
 
   end
