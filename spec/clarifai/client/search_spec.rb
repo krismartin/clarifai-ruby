@@ -23,7 +23,7 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
 
       describe "response object when successful" do
 
-        it "should have status" do
+        it "should have OK status" do
           @@search_response.status.status.must_equal "OK"
         end
 
@@ -50,14 +50,11 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
           per_page = 2
           total_pages = (total_num_results + per_page - 1) / per_page
 
-          puts "\nunpaginated_results: #{unpaginated_results.join(', ')}"
-
           total_pages.times do |index|
             page = index+1
             start = (page==1 ? 0 : ((page-1)*per_page))
             response = @@client.search collection_name, tags: ['nobody'], per_page: per_page, start: start
             results = response.results.collect{|r| r.document.docid}
-            puts "Start: #{start}, Per page: #{per_page}: #{results.join(', ')}\n"
             results.must_equal unpaginated_results[start..(start+per_page)-1]
           end
         end
@@ -102,6 +99,82 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
 
       end
 
+      describe "with multiple tags passed" do
+
+        it "should have OK status" do
+          response = @@client.search collection_name, { tags: ['dog', 'puppy'] }
+          response.status.status.must_equal "OK"
+        end
+
+      end
+
+      describe "with image URL passed" do
+
+        it "should have OK status" do
+          response = @@client.search collection_name, { image_urls: ['http://farm3.staticflickr.com/2063/5742404359_fce5e850bd_b.jpg'] }
+          response.status.status.must_equal "OK"
+        end
+
+        describe "invalid image URL" do
+
+          it "should return ERROR" do
+            response = @@client.search collection_name, { image_urls: ['farm3.staticflickr.com/2063/5742404359_fce5e850bd_b.jpg'] }
+            response.status.status.must_equal "ERROR"
+          end
+
+        end
+
+      end
+
+      describe "with document ID passed" do
+
+        it "should have OK status" do
+          response = @@client.search collection_name, { document_ids: ['image_1'] }
+          response.status.status.must_equal "OK"
+        end
+
+        describe "invalid document ID" do
+
+          it "should return ERROR" do
+            response = @@client.search collection_name, { document_ids: ['invalid-doc-id'] }
+            response.status.status.must_equal "ERROR"
+          end
+
+        end
+
+      end
+
+      describe "with mixed filters passed" do
+
+        describe "tags and image URL" do
+
+          it "should have OK status" do
+            response = @@client.search collection_name, { tags: ['nobody'], image_urls: ['http://farm3.staticflickr.com/2063/5742404359_fce5e850bd_b.jpg'] }
+            response.status.status.must_equal "OK"
+          end
+
+        end
+
+        describe "tags and document ID" do
+
+          it "should have OK status" do
+            response = @@client.search collection_name, { tags: ['nobody'], document_ids: ['image_1'] }
+            response.status.status.must_equal "OK"
+          end
+
+        end
+
+      end
+
+      describe "with metadata filters passed" do
+
+        it "should have OK status" do
+          response = @@client.search collection_name, { tags: ['nobody'], metadata: { license_type: 'royalty-free', photographer_id: 'photographer_1' } }
+          response.status.status.must_equal "OK"
+        end
+
+      end
+
       describe "with top_tags passed" do
 
         it "should return the aggregated tags" do
@@ -116,6 +189,19 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
             tag = response.aggregations.top_tags.top_tags.buckets.first
             tag["key"].wont_be_nil
             tag["doc_count"].must_be_kind_of Integer
+          end
+
+        end
+
+      end
+
+      describe "with scoring_mode passed" do
+
+        describe "scoring mode is dot-product" do
+
+          it "should have OK status" do
+            response = @@client.search collection_name, { tags: ['nobody'] }, { smode: 'dot' }
+            response.status.status.must_equal "OK"
           end
 
         end
