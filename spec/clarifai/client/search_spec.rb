@@ -12,6 +12,7 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
       @@client = Clarifai::Client.new(client_id: client_id, client_secret: client_secret, collection_id: collection_name)
       create_collection(@@client, collection_name)
       create_documents(@@client, collection_name)
+      sleep(3) # hack: short sleep after creating documents and trying to search to avoid search index latency
       @@search_response = @@client.search collection_name, tags: ["nobody"]
     end
   end
