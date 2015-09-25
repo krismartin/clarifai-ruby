@@ -20,7 +20,7 @@ module Clarifai
       if (!self.access_token || self.access_token.empty?)
         auth_response = get_access_token
         self.access_token = auth_response[:access_token]
-        self.access_token_expires_at = Time.now.utc + auth_response.expires_in if auth_response.expires_in.present?
+        self.access_token_expires_at = Time.now.utc + auth_response.expires_in if (!auth_response.expires_in.nil? && auth_response.expires_in!="")
       end
     end
 

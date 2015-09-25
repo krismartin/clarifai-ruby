@@ -2,6 +2,8 @@
 
 A Ruby wrapper for the Clarifai API
 
+[![Build Status](https://api.travis-ci.org/krismartin/clarifai-ruby.svg?branch=master)](https://travis-ci.org/krismartin/clarifai-ruby/)
+
 ## Installation
 
 TODO: Write installation instructions here

@@ -29,7 +29,11 @@ module Clarifai
 
       def valid_args?(args)
         args.keys.each do |query|
-          raise "Invalid search query '#{query}'" if !VALID_SEARCH_QUERIES.include? query
+          raise ArgumentError.new("Invalid search query '#{query}'") if !VALID_SEARCH_QUERIES.include? query
+        end
+
+        if args.key?(:metadata) && ![:tags, :query_string, :document_ids, :image_urls].any? {|k| args.key?(k)}
+          raise ArgumentError.new("You must specify at least one search criteria ('query_string', 'tags', 'image_urls', 'document_ids') with 'metadata' filters")
         end
       end
 
