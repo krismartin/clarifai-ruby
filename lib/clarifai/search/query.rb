@@ -2,7 +2,7 @@ module Clarifai
   module Search
     class Query
 
-      VALID_SEARCH_QUERIES = [:tags, :query_string, :metadata, :document_ids, :image_urls, :size, :start, :per_page, :page]
+      VALID_SEARCH_QUERIES = [:tags, :query_string, :metadata, :namespace, :document_ids, :image_urls, :size, :start, :per_page, :page]
       DEFAULT_PER_PAGE = 50
       DEFAULT_PAGE = 0
       attr_accessor :query, :page, :per_page
@@ -16,7 +16,7 @@ module Clarifai
         self.query = {}
         self.query[:bool] = { must: [] } if multi_search_queries?(args)
 
-        construct_tags_query(args[:tags]) if (!args[:tags].nil? && !args[:tags].empty?)
+        construct_tags_query(args[:tags], args[:namespace]) if (!args[:tags].nil? && !args[:tags].empty?)
         construct_query_string_query(args[:query_string]) if (!args[:query_string].nil? && !args[:query_string].empty?)
         construct_similar_urls_query(args[:image_urls]) if (!args[:image_urls].nil? && !args[:image_urls].empty?)
         construct_similar_items_query(args[:document_ids]) if (!args[:document_ids].nil? && !args[:document_ids].empty?)
@@ -49,11 +49,11 @@ module Clarifai
         ([:tags, :metadata, :document_ids, :image_urls] & args.keys).count > 1
       end
 
-      def construct_tags_query(tags)
+      def construct_tags_query(tags, namespace=nil)
         if self.query.has_key? :bool
-          self.query[:bool][:must] << query_tags(tags)
+          self.query[:bool][:must] << query_tags(tags, namespace)
         else
-          self.query = query_tags(tags)
+          self.query = query_tags(tags, namespace)
         end
       end
 
@@ -97,12 +97,13 @@ module Clarifai
         end
       end
 
-      def query_tags(tags)
+      def query_tags(tags, namespace=nil)
         query = {}
         if tags.is_a? Array
           query[:tags] = tags
         elsif tags.is_a? Hash
           query[:tags] = { tags: tags }
+          query[:tags][:namespace] = namespace if namespace
         elsif tags.is_a? String
           query[:tags] = [tags]
         end
