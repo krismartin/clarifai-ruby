@@ -95,7 +95,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default embedding" do
           document = @@create_doc_response.document
-          document.embeddings.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_embedding = document.embeddings.first
+          default_embedding.namespace.wont_be_nil
+          default_embedding.embedding.must_be_kind_of Array
         end
 
         it "should have media_refs" do
@@ -110,7 +112,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default annotation_set" do
           document = @@create_doc_response.document
-          document.annotation_sets.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_annotation_set = document.annotation_sets.first
+          default_annotation_set.namespace.wont_be_nil
+          default_annotation_set.annotations.must_be_kind_of Array
         end
 
         it "should have docid" do
@@ -209,7 +213,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default embedding" do
           document = @@get_doc_response.document
-          document.embeddings.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_embedding = document.embeddings.first
+          default_embedding.namespace.wont_be_nil
+          default_embedding.embedding.must_be_kind_of Array
         end
 
         it "should have media_refs" do
@@ -224,7 +230,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default annotation_set" do
           document = @@get_doc_response.document
-          document.annotation_sets.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_annotation_set = document.annotation_sets.first
+          default_annotation_set.namespace.wont_be_nil
+          default_annotation_set.annotations.must_be_kind_of Array
         end
 
         it "should have docid" do
