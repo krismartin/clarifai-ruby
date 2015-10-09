@@ -62,7 +62,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
   before do
     if @@client.nil? || @@create_doc_response.nil? || @@get_doc_response.nil?
       Clarifai.reset
-      @@client = Clarifai::Client.new(client_id: client_id, client_secret: client_secret, collection_id: collection_name)
+      @@client = Clarifai::Client.new(endpoint: api_endpoint, client_id: client_id, client_secret: client_secret, collection_id: collection_name)
       create_collection(@@client, collection_name)
       @@create_doc_response = create_document(@@client, collection_name, image_1)
       @@get_doc_response = get_document(@@client, collection_name, image_1[:id])

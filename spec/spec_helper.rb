@@ -12,6 +12,10 @@ def client_secret
   ENV["CLARIFAI_CLIENT_SECRET"]
 end
 
+def api_endpoint
+  ENV["CLARIFAI_ENDPOINT"] || "https://api.clarifai.com/v1/"
+end
+
 def collection_id
   "clarifai_minitest_#{Time.now.strftime('%Y%m%d')}"
 end
