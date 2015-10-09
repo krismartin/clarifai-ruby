@@ -23,7 +23,7 @@ class Clarifai::Client::DocumentMetadataSpec < MiniTest::Spec
   before do
     if @@client.nil?
       Clarifai.reset
-      @@client = Clarifai::Client.new(client_id: client_id, client_secret: client_secret, collection_id: collection_name)
+      @@client = Clarifai::Client.new(endpoint: api_endpoint, client_id: client_id, client_secret: client_secret, collection_id: collection_name)
       create_collection(@@client, collection_name)
     end
   end

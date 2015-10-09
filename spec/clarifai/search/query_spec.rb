@@ -27,6 +27,17 @@ describe Clarifai::Search::Query do
       search_query.query[:tags][:tags].keys.sort.must_equal ["dog", "puppy"].sort
     end
 
+    describe "with namespace" do
+
+      it "should set the namespace property" do
+        search_query = Clarifai::Search::Query.new(tags: { "dog" => 1.0, "puppy" => 1.0 }, namespace: "*")
+        search_query.query[:tags][:tags].wont_be_nil
+        search_query.query[:tags][:tags].keys.sort.must_equal ["dog", "puppy"].sort
+        search_query.query[:tags][:namespace].must_equal "*"
+      end
+
+    end
+
   end
 
   describe "given a single tag" do

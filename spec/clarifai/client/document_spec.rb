@@ -62,7 +62,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
   before do
     if @@client.nil? || @@create_doc_response.nil? || @@get_doc_response.nil?
       Clarifai.reset
-      @@client = Clarifai::Client.new(client_id: client_id, client_secret: client_secret, collection_id: collection_name)
+      @@client = Clarifai::Client.new(endpoint: api_endpoint, client_id: client_id, client_secret: client_secret, collection_id: collection_name)
       create_collection(@@client, collection_name)
       @@create_doc_response = create_document(@@client, collection_name, image_1)
       @@get_doc_response = get_document(@@client, collection_name, image_1[:id])
@@ -95,7 +95,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default embedding" do
           document = @@create_doc_response.document
-          document.embeddings.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_embedding = document.embeddings.first
+          default_embedding.namespace.wont_be_nil
+          default_embedding.embedding.must_be_kind_of Array
         end
 
         it "should have media_refs" do
@@ -110,7 +112,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default annotation_set" do
           document = @@create_doc_response.document
-          document.annotation_sets.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_annotation_set = document.annotation_sets.first
+          default_annotation_set.namespace.wont_be_nil
+          default_annotation_set.annotations.must_be_kind_of Array
         end
 
         it "should have docid" do
@@ -209,7 +213,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default embedding" do
           document = @@get_doc_response.document
-          document.embeddings.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_embedding = document.embeddings.first
+          default_embedding.namespace.wont_be_nil
+          default_embedding.embedding.must_be_kind_of Array
         end
 
         it "should have media_refs" do
@@ -224,7 +230,9 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
 
         it "should have default annotation_set" do
           document = @@get_doc_response.document
-          document.annotation_sets.detect{|e| e.namespace == 'default'}.wont_be_nil
+          default_annotation_set = document.annotation_sets.first
+          default_annotation_set.namespace.wont_be_nil
+          default_annotation_set.annotations.must_be_kind_of Array
         end
 
         it "should have docid" do
