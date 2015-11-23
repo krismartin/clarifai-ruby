@@ -54,6 +54,7 @@ def delete_document(client, collection, doc_id)
 end
 
 Minitest.after_run {
+  puts "Using API endpoint: #{api_endpoint}"
   client = Clarifai::Client.new(client_id: client_id, client_secret: client_secret)
   ["collection_test", "collection_test-2", "document_test", "document_metadata_test", "document_annotation_test", "search_test"].each do |postfix|
     client.delete_collection "#{collection_id}-#{postfix}"
