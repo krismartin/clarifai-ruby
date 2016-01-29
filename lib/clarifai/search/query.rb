@@ -46,7 +46,7 @@ module Clarifai
       end
 
       def multi_search_queries?(args)
-        ([:tags, :bool_query, :document_ids, :image_urls] & args.keys).count > 1
+        ([:query_string, :tags, :bool_query, :document_ids, :image_urls] & args.keys).count > 1
       end
 
       def construct_tags_query(tags, namespace=nil)
