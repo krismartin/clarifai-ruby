@@ -16,7 +16,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
       "photographer_name" => "John Doe",
       "photographer_id" => "photographer_1",
       "orientation" => "landscape",
-      "license_type" => "royalty-free"
+      "license_type" => "royalty_free"
     }
   }}
 
@@ -28,7 +28,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
       "photographer_name" => "Israel Bode",
       "photographer_id" => "photographer_2",
       "orientation" => "landscape",
-      "license_type" => "rights-managed"
+      "license_type" => "rights_managed"
     }
   }}
 
@@ -40,7 +40,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
       "photographer_name" => "Robert Wiza",
       "photographer_id" => "photographer_3",
       "orientation" => "landscape",
-      "license_type" => "rights-managed"
+      "license_type" => "rights_managed"
     }
   }}
 
@@ -52,7 +52,7 @@ class Clarifai::Client::DocumentSpec < MiniTest::Spec
       "photographer_name" => "Evelyn Lehner",
       "photographer_id" => "photographer_4",
       "orientation" => "landscape",
-      "license_type" => "rights-managed"
+      "license_type" => "rights_managed"
     }
   }}
 

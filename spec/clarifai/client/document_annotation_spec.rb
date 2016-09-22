@@ -13,7 +13,7 @@ class Clarifai::Client::DocumentAnnotationSpec < MiniTest::Spec
       "photographer_name" => "John Doe",
       "photographer_id" => "photographer_1",
       "orientation" => "landscape",
-      "license_type" => "royalty-free"
+      "license_type" => "royalty_free"
     }
   }}
 

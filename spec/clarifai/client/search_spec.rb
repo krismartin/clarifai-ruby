@@ -166,11 +166,17 @@ class Clarifai::Client::SearchSpec < MiniTest::Spec
 
       end
 
-      describe "with metadata filters passed" do
+      describe "with bool query passed" do
 
         it "should have OK status" do
-          response = @@client.search collection_name, { tags: ['nobody'], metadata: { license_type: 'royalty-free', photographer_id: 'photographer_1' } }
+          response = @@client.search collection_name, { tags: ['nobody'], bool_query: { must: { photographer_id: 'photographer_1' } } }
           response.status.status.must_equal "OK"
+        end
+
+        it "should return a filtered search results" do
+          response = @@client.search collection_name, { tags: ['city'], bool_query: { must: { photographer_id: 'photographer_3', license_type: 'royalty_free' } } }
+          response.results.collect{|r| r.document.metadata['photographer_id']}.uniq.must_equal ['photographer_3']
+          response.results.collect{|r| r.document.metadata['license_type']}.uniq.must_equal ['royalty_free']
         end
 
       end

@@ -94,16 +94,28 @@ describe Clarifai::Search::Query do
 
   end
 
-  describe "given a metadata filters" do
+  describe "given a bool query" do
 
     it "can be created if given other search criterias" do
-      search_query = Clarifai::Search::Query.new(tags: ["dog"], metadata: { "photographer_id" => "photographer-1" })
-      search_criteria = search_query.query[:bool][:must].detect{|criteria| criteria.keys.first==:term}
-      search_criteria[:term].must_equal({ "photographer_id" => "photographer-1" })
+      search_query = Clarifai::Search::Query.new(tags: ["dog"], bool_query: { must: { "photographer_id" => "photographer-1" } })
+      must_term = search_query.query[:bool][:must].detect{|term| term.keys.first==:term}
+      must_term[:term].must_equal({ "photographer_id" => "photographer-1" })
     end
 
     it "cannot be created without given other search criteria" do
-      err = ->{ Clarifai::Search::Query.new(metadata: { "photographer_id" => "photographer-1" }) }.must_raise ArgumentError
+      err = ->{ Clarifai::Search::Query.new(bool_query: { must: { "photographer_id" => "photographer-1" } }) }.must_raise ArgumentError
+    end
+
+  end
+
+  describe "given a mixed of bool queries ('must' and 'must_not')" do
+
+    it "should nested the 'must_not' clause" do
+      search_query = Clarifai::Search::Query.new(tags: ["dog"], bool_query: { must: { "photographer_id" => "photographer-1" }, must_not: { "orientation" => "landscape" } })
+      must_term = search_query.query[:bool][:must].detect{|term| term.keys.first==:term}
+      must_not_term = search_query.query[:bool][:must].detect{|term| term.keys.first==:bool}[:bool][:must_not].first
+      must_term[:term].must_equal({ "photographer_id" => "photographer-1" })
+      must_not_term[:term].must_equal({ "orientation" => "landscape" })
     end
 
   end
@@ -116,7 +128,7 @@ describe Clarifai::Search::Query do
     end
 
     it "should set multiple search criterias" do
-      search_query = Clarifai::Search::Query.new(tags: ["dog"], image_urls: ["http://farm3.staticflickr.com/2752/4425027236_685ee5fa35_b.jpg"], metadata: { "photographer_id" => "photographer-1" })
+      search_query = Clarifai::Search::Query.new(tags: ["dog"], image_urls: ["http://farm3.staticflickr.com/2752/4425027236_685ee5fa35_b.jpg"], bool_query: { must: { "photographer_id" => "photographer-1" } })
       search_query.query[:bool][:must].count.must_equal 3
     end
 

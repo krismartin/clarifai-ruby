@@ -2,7 +2,7 @@ module Clarifai
   module Search
     class Query
 
-      VALID_SEARCH_QUERIES = [:tags, :query_string, :metadata, :namespace, :document_ids, :image_urls, :size, :start, :per_page, :page]
+      VALID_SEARCH_QUERIES = [:tags, :query_string, :bool_query, :namespace, :document_ids, :image_urls, :size, :start, :per_page, :page]
       DEFAULT_PER_PAGE = 50
       DEFAULT_PAGE = 0
       attr_accessor :query, :page, :per_page
@@ -20,7 +20,7 @@ module Clarifai
         construct_query_string_query(args[:query_string]) if (!args[:query_string].nil? && !args[:query_string].empty?)
         construct_similar_urls_query(args[:image_urls]) if (!args[:image_urls].nil? && !args[:image_urls].empty?)
         construct_similar_items_query(args[:document_ids]) if (!args[:document_ids].nil? && !args[:document_ids].empty?)
-        construct_metadata_query(args[:metadata]) if (!args[:metadata].nil? && !args[:metadata].empty?)
+        construct_bool_query(args[:bool_query]) if (!args[:bool_query].nil? && !args[:bool_query].empty?)
 
         if (self.query.has_key?(:bool) && self.query[:bool].is_a?(Hash) && self.query[:bool][:must].is_a?(Array))
           self.query[:bool][:must].flatten!
@@ -32,8 +32,8 @@ module Clarifai
           raise ArgumentError.new("Invalid search query '#{query}'") if !VALID_SEARCH_QUERIES.include? query
         end
 
-        if args.key?(:metadata) && ![:tags, :query_string, :document_ids, :image_urls].any? {|k| args.key?(k)}
-          raise ArgumentError.new("You must specify at least one search criteria ('query_string', 'tags', 'image_urls', 'document_ids') with 'metadata' filters")
+        if args.key?(:bool_query) && ![:tags, :query_string, :document_ids, :image_urls].any? {|k| args.key?(k)}
+          raise ArgumentError.new("You must specify at least one search criteria ('query_string', 'tags', 'image_urls', 'document_ids') with 'bool_query'")
         end
       end
 
@@ -46,7 +46,7 @@ module Clarifai
       end
 
       def multi_search_queries?(args)
-        ([:tags, :metadata, :document_ids, :image_urls] & args.keys).count > 1
+        ([:query_string, :tags, :bool_query, :document_ids, :image_urls] & args.keys).count > 1
       end
 
       def construct_tags_query(tags, namespace=nil)
@@ -89,11 +89,17 @@ module Clarifai
         end
       end
 
-      def construct_metadata_query(metadata)
-        if self.query.has_key? :bool
-          self.query[:bool][:must] << metadata_filters(metadata)
-        else
-          self.query = metadata_filters(metadata)
+      def construct_bool_query(bool_query)
+        if bool_query.has_key?(:must)
+          self.query[:bool][:must] << bool_queries(bool_query[:must])
+        end
+
+        if bool_query.has_key?(:must_not)
+          self.query[:bool][:must] << {
+            bool: {
+              must_not: bool_queries(bool_query[:must_not])
+            }
+          }
         end
       end
 
@@ -110,9 +116,9 @@ module Clarifai
         return query
       end
 
-      def metadata_filters(filters)
+      def bool_queries(bool_query)
         terms = []
-        filters.each do |key, value|
+        bool_query.each do |key, value|
           terms << {
             term: { key => value }
           }
