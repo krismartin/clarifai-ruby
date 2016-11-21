@@ -16,6 +16,7 @@ module Clarifai
       :user_agent,
       :params_encoder,
       :no_response_wrapper,
+      :follow_redirect,
       :collection_id
     ].freeze
 
@@ -60,6 +61,9 @@ module Clarifai
     # By default, don't wrap responses with meta data (i.e. pagination)
     DEFAULT_NO_RESPONSE_WRAPPER = false
 
+    # By default, follow 3xx redirects
+    DEFAULT_FOLLOW_REDIRECT = true
+
     # An array of valid request/response formats
     #
     # @note Not all methods support the XML format.
@@ -99,6 +103,7 @@ module Clarifai
       self.user_agent           = DEFAULT_USER_AGENT
       self.params_encoder       = DEFAULT_PARAMS_ENCODER
       self.no_response_wrapper  = DEFAULT_NO_RESPONSE_WRAPPER
+      self.follow_redirect      = DEFAULT_FOLLOW_REDIRECT
     end
   end
 end

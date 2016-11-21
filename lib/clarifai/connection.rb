@@ -14,6 +14,11 @@ module Clarifai
 
       Faraday::Connection.new(options) do |connection|
         connection.use FaradayMiddleware::ClarifaiOAuth2, client_id, access_token
+
+        if follow_redirect
+          connection.use FaradayMiddleware::FollowRedirects, standards_compliant: true
+        end
+
         if encode_json
           connection.use FaradayMiddleware::EncodeJson
         else
