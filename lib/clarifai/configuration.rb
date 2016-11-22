@@ -16,8 +16,7 @@ module Clarifai
       :user_agent,
       :params_encoder,
       :no_response_wrapper,
-      :follow_redirect,
-      :collection_id
+      :follow_redirect
     ].freeze
 
     # By default, don't set a client ID

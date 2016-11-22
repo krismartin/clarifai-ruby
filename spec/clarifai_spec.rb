@@ -90,13 +90,6 @@ describe Clarifai do
     end
   end
 
-  describe ".collection_id" do
-    it "should set the collection_id" do
-      Clarifai.collection_id = "clarifai_test"
-      Clarifai.collection_id.must_equal "clarifai_test"
-    end
-  end
-
   describe ".configure" do
     Clarifai::Configuration::VALID_OPTIONS_KEYS.each do |key|
       it "should set the #{key}" do
