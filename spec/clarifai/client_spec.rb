@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 class Clarifai::ClientSpec < MiniTest::Spec
-  # @@client = nil
-
   describe Clarifai::Client do
     describe ".new" do
       before do
