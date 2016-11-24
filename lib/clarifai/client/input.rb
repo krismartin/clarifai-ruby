@@ -51,6 +51,7 @@ module Clarifai
         return post("inputs", params.to_json, params_encoder, encode_json=true)
       end
 
+      # Retrieves an input by ID
       def get_input(input_id)
         if input_id.nil? || input_id.empty?
           raise ArgumentError.new('Input ID cannot contain nil or be empty')
@@ -58,6 +59,7 @@ module Clarifai
         return get("inputs/#{input_id}", {}, params_encoder, encode_json=true)
       end
 
+      # Deletes an input by ID
       def delete_input(input_id)
         if input_id.nil? || input_id.empty?
           raise ArgumentError.new('Input ID cannot contain nil or be empty')

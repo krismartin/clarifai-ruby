@@ -3,6 +3,7 @@ require 'minitest/autorun'
 
 require 'faraday'
 require 'clarifai'
+require 'securerandom'
 
 def client_id
   ENV["CLARIFAI_CLIENT_ID"]

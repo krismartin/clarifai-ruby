@@ -6,9 +6,11 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
   @@add_input_response_with_id = nil
   @@add_input_with_concepts_response = nil
   @@add_input_with_metadata_response = nil
+  @@delete_input_response = nil
+  @@get_input_response = nil
 
   let(:image) {{
-    id: "738fc05c7be9fa887743384186c2db6b",
+    id: SecureRandom.hex,
     url: "http://farm6.staticflickr.com/5323/18223890844_baa427cbbe_b.jpg",
     concepts: [
       'calm', 'tranquility', 'blue'
@@ -28,6 +30,12 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
     end
 
     describe ".create_input" do
+      describe "when given an empty image url" do
+        it "must raise an ArgumentError" do
+          err = ->{ @@client.create_input("") }.must_raise ArgumentError
+        end
+      end
+
       describe "when given an image url" do
         before do
           # Create the input
@@ -35,9 +43,8 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
         end
 
         describe "response object" do
-          it "should have a status property" do
+          it "should have a status code equal to 10000" do
             @@add_input_response.status.code.must_equal 10000
-            @@add_input_response.status.description.must_equal "Ok"
           end
 
           it "should have an inputs property" do
@@ -64,6 +71,25 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
           # Delete the input
           input_id = @@add_input_response.inputs.first.id
           @@client.delete_input input_id
+        end
+      end
+
+      describe "when given a duplicate image url" do
+        before do
+          # Create inputs with same image URL
+          @@client.create_input(image[:url], id: image[:id])
+          @@add_input_response = @@client.create_input(image[:url])
+        end
+
+        describe "response object" do
+          it "should have a status code equal to 10020" do
+            @@add_input_response.status.code.must_equal 10020
+          end
+        end
+
+        after do
+          # Delete the input
+          @@client.delete_input image[:id]
         end
       end
 
@@ -135,5 +161,95 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
       end
     end
 
+    describe ".get_input" do
+      describe "when given an empty ID" do
+        it "must raise an ArgumentError" do
+          err = ->{ @@client.get_input("") }.must_raise ArgumentError
+        end
+      end
+
+      describe "when given a non-existence ID" do
+        before do
+          @@get_input_response = @@client.get_input("123")
+        end
+
+        describe "response object" do
+          it "should have a status code equal to 11101" do
+            @@get_input_response.status.code.must_equal 11101
+          end
+        end
+      end
+
+      describe "when given an input ID" do
+        before do
+          @@client.create_input(image[:url], id: image[:id])
+          @@get_input_response = @@client.get_input(image[:id])
+        end
+
+        describe "response object" do
+          it "should have a status code equal to 10000" do
+            @@get_input_response.status.code.must_equal 10000
+          end
+
+          it "should have an input" do
+            @@get_input_response.input.wont_be_nil
+          end
+        end
+
+        describe "returned input" do
+          it "should have an ID" do
+            @@get_input_response.input.id.must_equal image[:id]
+          end
+
+          it "should have data" do
+            @@get_input_response.input.data.wont_be_nil
+          end
+        end
+
+        after do
+          input_id = @@get_input_response.input.id
+          @@client.delete_input input_id
+        end
+      end
+    end
+
+    describe ".delete_input" do
+      describe "when given an empty ID" do
+        it "must raise an ArgumentError" do
+          err = ->{ @@client.delete_input("") }.must_raise ArgumentError
+        end
+      end
+
+      describe "when given a non-existence ID" do
+        before do
+          @@delete_input_response = @@client.delete_input("123")
+        end
+
+        describe "response object" do
+          it "should have a status code equal to 11101" do
+            @@delete_input_response.status.code.must_equal 11101
+          end
+        end
+      end
+
+      describe "when given an input ID" do
+        before do
+          @@client.create_input(image[:url], id: image[:id])
+          @@delete_input_response = @@client.delete_input(image[:id])
+        end
+
+        describe "response object" do
+          it "should have a status code equal to 10000" do
+            @@delete_input_response.status.code.must_equal 10000
+          end
+        end
+
+        after do
+          if @@delete_input_response.nil?
+            @@client.delete_input(image[:id])
+          end
+        end
+      end
+    end
   end
 end
