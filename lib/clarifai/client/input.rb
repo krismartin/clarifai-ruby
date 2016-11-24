@@ -4,7 +4,7 @@ module Clarifai
     module Input
 
       # Creates an input using a publicly accessible URL
-      def add_input(image_url, input_params={})
+      def create_input(image_url, input_params={})
         if image_url.nil? || image_url.empty?
           raise ArgumentError.new('Image URL cannot contain nil or be empty')
         end
