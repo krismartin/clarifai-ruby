@@ -36,7 +36,19 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
         end
       end
 
-      describe "when given an image url" do
+      describe "when given an invalid image url" do
+        before do
+          @@add_input_response = @@client.create_input 'http://invalidimage.jpg'
+        end
+
+        describe "response object" do
+          it "should have status code equal to 10020" do
+            @@add_input_response.status.code.must_equal 10020
+          end
+        end
+      end
+
+      describe "when given a valid image url" do
         before do
           # Create the input
           @@add_input_response = @@client.create_input(image[:url])
@@ -93,7 +105,7 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
         end
       end
 
-      describe "when given an image url and an ID" do
+      describe "when given a valid image url and an ID" do
         before do
           # Create the input
           @@add_input_response_with_id = @@client.create_input(image[:url], id: image[:id])
@@ -112,7 +124,7 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
         end
       end
 
-      describe "when given an image url and concepts" do
+      describe "when given a valid image url and concepts" do
         before do
           # Create the input
           @@add_input_response_with_concepts = @@client.create_input(image[:url], concepts: image[:concepts])
@@ -135,7 +147,7 @@ class Clarifai::Client::InputSpec < MiniTest::Spec
         end
       end
 
-      describe "when given an image url and metadata" do
+      describe "when given a valid image url and metadata" do
         before do
           # Create the input
           @@add_input_response_with_metadata = @@client.create_input(image[:url], metadata: image[:metadata])

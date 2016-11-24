@@ -19,6 +19,11 @@ module Clarifai
       request(:put, path, options, params_encoder, encode_json, raw, no_response_wrapper)
     end
 
+    # Perform an HTTP PATCH request
+    def patch(path, options={}, params_encoder=params_encoder, encode_json=false, raw=false, no_response_wrapper=no_response_wrapper)
+      request(:patch, path, options, params_encoder, encode_json, raw, no_response_wrapper)
+    end
+
     # Perform an HTTP DELETE request
     def delete(path, options={}, params_encoder=params_encoder, encode_json=false, raw=false, no_response_wrapper=no_response_wrapper)
       request(:delete, path, options, params_encoder, encode_json, raw, no_response_wrapper)
