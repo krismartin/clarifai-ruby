@@ -8,7 +8,7 @@ module Clarifai
       # @option options [String] :id
       # @option options [Array] :concepts
       # @option options [Hash] :metadata
-      def create_input(image_url, input_params={})
+      def create_input(image_url, options={})
         if image_url.nil? || image_url.empty?
           raise ArgumentError, 'Image URL cannot contain nil or be empty'
         end
@@ -19,9 +19,9 @@ module Clarifai
           }
         }
 
-        input_id = input_params[:id]
-        concepts = input_params[:concepts]
-        metadata = input_params[:metadata]
+        input_id = options[:id]
+        concepts = options[:concepts]
+        metadata = options[:metadata]
 
         # If no ID is supplied, one will be created
         if !input_id.nil? && !input_id.empty?
