@@ -4,9 +4,13 @@ module Clarifai
     module Input
 
       # Creates an input using a publicly accessible URL
+      # @param [String] image_url publicly accessible image URL to be indexed
+      # @option options [String] :id
+      # @option options [Array] :concepts
+      # @option options [Hash] :metadata
       def create_input(image_url, input_params={})
         if image_url.nil? || image_url.empty?
-          raise ArgumentError.new('Image URL cannot contain nil or be empty')
+          raise ArgumentError, 'Image URL cannot contain nil or be empty'
         end
 
         params = {
@@ -34,7 +38,7 @@ module Clarifai
               params[:data][:concepts] << concept
             end
           else
-            raise ArgumentError.new('Concepts must be an Array of Strings or Hashes')
+            raise ArgumentError, 'Concepts must be an Array of Strings or Hashes'
           end
         end
 
@@ -42,7 +46,7 @@ module Clarifai
           if metadata.is_a?(Hash)
             params[:data][:metadata] = metadata
           else
-            raise ArgumentError.new('Metadata must be a Hash')
+            raise ArgumentError, 'Metadata must be a Hash'
           end
         end
 
@@ -52,17 +56,19 @@ module Clarifai
       end
 
       # Retrieves an input by ID
+      # @param [String] input_id Input ID
       def get_input(input_id)
         if input_id.nil? || input_id.empty?
-          raise ArgumentError.new('Input ID cannot contain nil or be empty')
+          raise ArgumentError, 'Input ID cannot contain nil or be empty'
         end
         return get("inputs/#{input_id}", {}, params_encoder, encode_json=true)
       end
 
       # Deletes an input by ID
+      # @param [String] input_id Input ID
       def delete_input(input_id)
         if input_id.nil? || input_id.empty?
-          raise ArgumentError.new('Input ID cannot contain nil or be empty')
+          raise ArgumentError, 'Input ID cannot contain nil or be empty'
         end
         return delete("inputs/#{input_id}", {}, params_encoder, encode_json=true)
       end

@@ -32,6 +32,12 @@ class Clarifai::Client::ConceptSpec < MiniTest::Spec
         end
       end
 
+      describe "when given a String as concepts" do
+        it "must raise an ArgumentError" do
+          err = ->{ @@client.update_input_concepts(image[:id], 'blue') }.must_raise ArgumentError
+        end
+      end
+
       describe "when given a non-existence ID" do
         before do
           @@update_input_concepts_response = @@client.update_input_concepts("123", image[:concepts])
@@ -95,6 +101,12 @@ class Clarifai::Client::ConceptSpec < MiniTest::Spec
       describe "when given an empty concepts" do
         it "must raise an ArgumentError" do
           err = ->{ @@client.delete_input_concepts(image[:id], []) }.must_raise ArgumentError
+        end
+      end
+
+      describe "when given a String as concepts" do
+        it "must raise an ArgumentError" do
+          err = ->{ @@client.delete_input_concepts(image[:id], 'blue') }.must_raise ArgumentError
         end
       end
 
