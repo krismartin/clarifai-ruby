@@ -7,6 +7,7 @@ module Clarifai
 
     include Clarifai::Client::Input
     include Clarifai::Client::Concept
+    include Clarifai::Client::InputMetadata
     include Clarifai::Client::Search
   end
 end
