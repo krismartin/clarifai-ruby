@@ -17,39 +17,33 @@ module Clarifai
         params = {
           query: {
             ands: []
+          },
+          pagination: {
+            page: page,
+            per_page: per_page
           }
         }
 
         if predicted_concepts
-          if !predicted_concepts.is_a?(Array)
-            raise ArgumentError, ':predicted_concepts must be an Array'
-          end
-
+          raise ArgumentError, ':predicted_concepts must be an Array' if !predicted_concepts.is_a?(Array)
           predicted_concepts.each do |concept|
             params[:query][:ands] << SearchParameter.predicted_concept(concept)
           end
         end
 
         if user_supplied_concepts
-          if !user_supplied_concepts.is_a?(Array)
-            raise ArgumentError, ':user_supplied_concepts must be an Array'
-          end
-
+          raise ArgumentError, ':user_supplied_concepts must be an Array' if !user_supplied_concepts.is_a?(Array)
           user_supplied_concepts.each do |concept|
             params[:query][:ands] << SearchParameter.user_supplied_concept(concept)
           end
         end
 
         if metadata
-          if !metadata.is_a?(Hash)
-            raise ArgumentError, ':metadata must be a Hash'
-          end
+          raise ArgumentError, ':metadata must be a Hash' if !metadata.is_a?(Hash)
           params[:query][:ands] << SearchParameter.metadata(metadata)
         end
 
-        puts params
-
-        return post("searches?page=#{page}&per_page=#{per_page}", params.to_json, params_encoder, encode_json=true)
+        return post("searches", params.to_json, params_encoder, encode_json=true)
       end
 
       class SearchParameter
