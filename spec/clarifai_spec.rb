@@ -56,8 +56,8 @@ describe Clarifai do
   end
 
   describe ".endpoint" do
-    it "should return the default endpoint" do
-      Clarifai.endpoint.must_equal Clarifai::Configuration::DEFAULT_ENDPOINT
+    it "should return the default V2 endpoint" do
+      Clarifai.endpoint.must_match /v2/
     end
 
     it "should set the endpoint" do

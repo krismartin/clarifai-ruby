@@ -7,11 +7,11 @@ module Clarifai
       # @param [String] input_id Input ID
       # @param [Hash] metadata Metadata to be added/updated
       def update_input_metadata(input_id, metadata)
-        if input_id.nil? || input_id.empty?
+        if input_id.nil? || input_id == ""
           raise ArgumentError, 'Input ID cannot contain nil or be empty'
         end
 
-        if metadata.nil? || metadata.empty?
+        if metadata.nil?
           raise ArgumentError, 'Metadata cannot contain nil or be empty'
         end
 
@@ -37,7 +37,7 @@ module Clarifai
       # Batch updates inputs metadata
       # @param [Array] inputs Array of inputs to be updated
       def update_inputs_metadata(inputs)
-        if inputs.nil? || inputs.empty?
+        if inputs.nil?
           raise ArgumentError, 'Inputs cannot contain nil or be empty'
         end
 
@@ -51,7 +51,7 @@ module Clarifai
         }
 
         inputs.each_with_index do |input, index|
-          raise ArgumentError, "inputs[#{index}]: Cannot contain nil or be empty" if input.nil? || input.empty?
+          raise ArgumentError, "inputs[#{index}]: Cannot contain nil or be empty" if input.nil?
           raise ArgumentError, "inputs[#{index}]: Must be a Hash" if !input.is_a?(Hash)
           [{key: :id, type: String}, {key: :metadata, type: Hash}].each do |prop|
             key = prop[:key]
@@ -65,7 +65,7 @@ module Clarifai
               raise ArgumentError, "inputs[#{index}][:#{key}]: Must be a #{type}"
             end
 
-            if input[key].nil? || input[key].empty?
+            if input[key].nil?
               raise ArgumentError, "inputs[#{index}][:#{key}]: Cannot contain nil or be empty"
             end
           end

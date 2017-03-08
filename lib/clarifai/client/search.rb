@@ -4,14 +4,14 @@ module Clarifai
     module Search
 
       # Searches by concepts
-      # @option options [Array] :predicted_concepts
-      # @option options [Array] :user_supplied_concepts
-      # @option options [Hash] :metadata
-      def search(options={}, page=1, per_page=20)
-        params = {}
-
-        predicted_concepts = options[:predicted_concepts]
-        user_supplied_concepts = options[:user_supplied_concepts]
+      # @param [String] concept_type Concept type to search (:predicted or :user_supplied)
+      # @param [Array] concepts Array of concepts
+      # @option options [Hash] :metadata Search by custom metadata
+      # @option options [Integer] :page Page number
+      # @option options [Integer] :per_page Number of records per page
+      def search(concept_type, concepts, options={})
+        page = options[:page] || 1
+        per_page = options[:page] || 50
         metadata = options[:metadata]
 
         params = {
@@ -24,19 +24,72 @@ module Clarifai
           }
         }
 
-        if predicted_concepts
-          raise ArgumentError, ':predicted_concepts must be an Array' if !predicted_concepts.is_a?(Array)
-          predicted_concepts.each do |concept|
+        raise ArgumentError, 'Concepts must be an Array' if !concepts.is_a?(Array)
+        concepts.each do |concept|
+          case concept_type
+          when :predicted
             params[:query][:ands] << SearchParameter.predicted_concept(concept)
+          when :user_supplied
+            params[:query][:ands] << SearchParameter.user_supplied(concept)
+          else
+            raise ArgumentError, "Unknown concept type '#{concept_type}'"
           end
         end
 
-        if user_supplied_concepts
-          raise ArgumentError, ':user_supplied_concepts must be an Array' if !user_supplied_concepts.is_a?(Array)
-          user_supplied_concepts.each do |concept|
-            params[:query][:ands] << SearchParameter.user_supplied_concept(concept)
-          end
+        if metadata
+          raise ArgumentError, ':metadata must be a Hash' if !metadata.is_a?(Hash)
+          params[:query][:ands] << SearchParameter.metadata(metadata)
         end
+
+        return post("searches", params.to_json, params_encoder, encode_json=true)
+      end
+
+      # Searches by predicted concepts
+      # @param [Array] concepts Array of concepts
+      # @option options [Hash] :metadata Search by custom metadata
+      # @option options [Integer] :page Page number
+      # @option options [Integer] :per_page Number of records per page
+      def search_by_predicted_concepts(concepts, options={})
+        return search(:predicted, concepts, options)
+      end
+
+      # Searches by user supplied concepts
+      # @param [Array] concepts Array of concepts
+      # @option options [Hash] :metadata Search by custom metadata
+      # @option options [Integer] :page Page number
+      # @option options [Integer] :per_page Number of records per page
+      def search_by_user_supplied_concepts(concepts, options={})
+        return search(:user_supplied, concepts, options)
+      end
+
+      # Searches by reverse image
+      # @option image_url [String] image_url publicly accessible image URL to be searched
+      # @option options [Integer] :page Page number
+      # @option options [Integer] :per_page Number of records per page
+      def reverse_image_search(image_url, options={})
+        page = options[:page] || 1
+        per_page = options[:per_page] || 50
+        metadata = options[:metadata]
+
+        params = {
+          query: {
+            ands: [
+              output: {
+                input: {
+                  data: {
+                    image: {
+                      url: image_url
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          pagination: {
+            page: page,
+            per_page: per_page
+          }
+        }
 
         if metadata
           raise ArgumentError, ':metadata must be a Hash' if !metadata.is_a?(Hash)
@@ -75,7 +128,7 @@ module Clarifai
           return self.concept(:predicted, concept)
         end
 
-        def self.user_supplied_concept(concept)
+        def self.user_supplied(concept)
           return self.concept(:user_supplied, concept)
         end
 

@@ -6,6 +6,7 @@ module Clarifai
     Dir[File.expand_path('../client/*.rb', __FILE__)].each{|f| require f}
 
     include Clarifai::Client::Input
+    include Clarifai::Client::Output
     include Clarifai::Client::Concept
     include Clarifai::Client::InputMetadata
     include Clarifai::Client::Search

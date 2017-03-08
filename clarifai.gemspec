@@ -8,9 +8,9 @@ Gem::Specification.new do |spec|
   spec.version       = Clarifai::VERSION
   spec.authors       = ["Kris Martin"]
   spec.email         = ["kris@imagebrief.com"]
-  spec.description   = %q{A Ruby wrapper for the Clarifai API}
-  spec.summary       = %q{A Ruby wrapper for the Clarifai API}
-  spec.homepage      = ""
+  spec.description   = %q{A Ruby wrapper for the Clarifai V2 API}
+  spec.summary       = %q{A Ruby wrapper for the Clarifai REST API}
+  spec.homepage      = "https://www.clarifai.com/"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
@@ -19,8 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_development_dependency "bundler", "~> 1.3"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "minitest", "~> 5.8.0"
+  spec.add_development_dependency "rake", "~> 10.1"
+  spec.add_development_dependency "minitest", "~> 5.8"
   spec.add_development_dependency "hashie", "2.0.5"
   spec.add_runtime_dependency('faraday', ['>= 0.9', '< 0.10'])
   spec.add_runtime_dependency('faraday_middleware', ['>= 0.9', '< 0.10'])
