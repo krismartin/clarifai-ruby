@@ -3,7 +3,7 @@ module Clarifai
     # Defines methods related to searches
     module Search
 
-      # Searches by concepts
+      # Search by concepts
       # @param [String] concept_type Concept type to search (:predicted or :user_supplied)
       # @param [Array] concepts Array of concepts
       # @option options [Hash] :metadata Search by custom metadata
@@ -44,7 +44,7 @@ module Clarifai
         return post("searches", params.to_json, params_encoder, encode_json=true)
       end
 
-      # Searches by predicted concepts
+      # Search by predicted concepts
       # @param [Array] concepts Array of concepts
       # @option options [Hash] :metadata Search by custom metadata
       # @option options [Integer] :page Page number
@@ -53,7 +53,7 @@ module Clarifai
         return search(:predicted, concepts, options)
       end
 
-      # Searches by user supplied concepts
+      # Search by user supplied concepts
       # @param [Array] concepts Array of concepts
       # @option options [Hash] :metadata Search by custom metadata
       # @option options [Integer] :page Page number
@@ -62,26 +62,42 @@ module Clarifai
         return search(:user_supplied, concepts, options)
       end
 
-      # Searches by reverse image
-      # @option image_url [String] image_url publicly accessible image URL to be searched
+      # Search by reverse image using image URL or input ID
+      # @param [String] image_url_or_input_id Image URL or Input ID
       # @option options [Integer] :page Page number
       # @option options [Integer] :per_page Number of records per page
-      def reverse_image_search(image_url, options={})
+      def reverse_image_search(image_url_or_input_id, options={})
         page = options[:page] || 1
         per_page = options[:per_page] || 50
         metadata = options[:metadata]
+
+        search_type = (image_url_or_input_id =~ /\A#{URI::regexp}\z/) ? :url : :id
+
+        case search_type
+        when :url
+          input_param = {
+            data: {
+              image: {
+                url: image_url_or_input_id
+              }
+            }
+          }
+
+        when :id
+          input_param = {
+            id: image_url_or_input_id,
+            data: {
+              image: {}
+            }
+          }
+
+        end
 
         params = {
           query: {
             ands: [
               output: {
-                input: {
-                  data: {
-                    image: {
-                      url: image_url
-                    }
-                  }
-                }
+                input: input_param
               }
             ]
           },
