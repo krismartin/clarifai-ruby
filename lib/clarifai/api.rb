@@ -16,10 +16,18 @@ module Clarifai
         send("#{key}=", options[key])
       end
 
-      # Generate access_token if one is not present
-      if (!self.access_token || self.access_token.empty?)
+      # Initialize access token if api_key is not being used and access_token has not been set
+      if (!self.api_key_set? && !self.access_token_set?)
         get_access_token
       end
+    end
+
+    def api_key_set?
+      self.api_key && !self.api_key.empty?
+    end
+
+    def access_token_set?
+      self.access_token && !self.access_token.empty?
     end
 
     def config

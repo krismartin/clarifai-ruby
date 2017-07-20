@@ -5,6 +5,8 @@ module Clarifai
   module Configuration
     # An array of valid keys in the options hash when configuring a {Clarifai::API}
     VALID_OPTIONS_KEYS = [
+      :api_key,
+      :client_secret,
       :client_id,
       :client_secret,
       :client_type,
@@ -18,6 +20,9 @@ module Clarifai
       :no_response_wrapper,
       :follow_redirect
     ].freeze
+
+    # By default, don't set an API Key
+    DEFAULT_API_KEY = nil
 
     # By default, don't set a client ID
     DEFAULT_CLIENT_ID = nil
@@ -90,6 +95,7 @@ module Clarifai
 
     # Reset all configuration options to defaults
     def reset
+      self.client_id            = DEFAULT_API_KEY
       self.client_id            = DEFAULT_CLIENT_ID
       self.client_secret        = DEFAULT_CLIENT_SECRET
       self.client_type          = DEFAULT_CLIENT_TYPE

@@ -5,6 +5,10 @@ require 'faraday'
 require 'clarifai'
 require 'securerandom'
 
+def api_key
+  ENV["CLARIFAI_API_KEY"]
+end
+
 def client_id
   ENV["CLARIFAI_CLIENT_ID"]
 end

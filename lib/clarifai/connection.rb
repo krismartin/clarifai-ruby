@@ -13,11 +13,13 @@ module Clarifai
       }
 
       Faraday::Connection.new(options) do |connection|
-        if access_token
+        if api_key
+          connection.use FaradayMiddleware::ClarifaiApiKeyAuth, api_key
+        elsif access_token
           connection.use FaradayMiddleware::ClarifaiOAuth2, access_token
         elsif client_id && client_secret
           connection.use Faraday::Request::BasicAuthentication, client_id, client_secret
-        end        
+        end
 
         if follow_redirect
           connection.use FaradayMiddleware::FollowRedirects, standards_compliant: true

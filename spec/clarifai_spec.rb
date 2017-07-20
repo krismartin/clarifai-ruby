@@ -16,6 +16,13 @@ describe Clarifai do
     end
   end
 
+  describe ".api_key" do
+    it "should set the api_key" do
+      Clarifai.api_key = "abc123-id"
+      Clarifai.api_key.must_equal "abc123-id"
+    end
+  end
+
   describe ".client_id" do
     it "should set the client_id" do
       Clarifai.client_id = "abc123-id"
